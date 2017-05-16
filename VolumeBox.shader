@@ -5,14 +5,14 @@
  */
 
 mat3 fromEuler(vec3 ang) {
-	vec2 a1 = vec2(sin(ang.x),cos(ang.x));
+    vec2 a1 = vec2(sin(ang.x),cos(ang.x));
     vec2 a2 = vec2(sin(ang.y),cos(ang.y));
     vec2 a3 = vec2(sin(ang.z),cos(ang.z));
     mat3 m;
     m[0] = vec3(a1.y*a3.y+a1.x*a2.x*a3.x,a1.y*a2.x*a3.x+a3.y*a1.x,-a2.y*a3.x);
-	m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
-	m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
-	return m;
+    m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
+    m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
+    return m;
 }
 bool intersectionRayBox(vec3 o, vec3 d, vec3 ext, out vec3 r0, out vec3 r1) {
     vec3 t0 = (-o - ext) / d; 
@@ -51,7 +51,7 @@ vec3 ACESFilm( vec3 x ) {
 
 // main
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-	vec2 iuv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
+    vec2 iuv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
     vec2 uv = iuv;
     uv.x *= iResolution.x / iResolution.y;    
     vec2 mouse = iMouse.xy / iResolution.xy * 4.0 - 2.0;
@@ -63,7 +63,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     } else {
         ang = vec3(0.0,sin(iGlobalTime)*0.75,cos(iGlobalTime*1.5)*0.75);
     }
-	mat3 rot = fromEuler(ang);    
+    mat3 rot = fromEuler(ang);    
     vec3 ori = vec3(0.0,0.0,5.0);
     vec3 dir = normalize(vec3(uv.xy,-3.0));      
     ori = ori * rot;
@@ -85,5 +85,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
         color = ACESFilm(color);
     }
                
-	fragColor = vec4(color,1.0);
+    fragColor = vec4(color,1.0);
 }
