@@ -54,7 +54,7 @@ vec3 fragment(vec3 p) {
 }    
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-	vec2 uv = fragCoord.xy / iResolution.xy;
+    vec2 uv = fragCoord.xy / iResolution.xy;
     uv = uv * 2.0 - 1.0;
     uv.x *= iResolution.x / iResolution.y;
     //uv = uv * (1.0 + pow(length(uv)*0.4,0.5)) * 0.6;
@@ -68,9 +68,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     mat4 rot = getRotMatrix(vec3(time,time*0.86,time*0.473));
 #else
     float p = 0.08;
-    mat4 rot = getRotMatrix(vec3(time		+sin(time*30.0)*p,
-                                 time*0.860	+sin(time*20.0)*p*1.24,
-                                 time*0.473	+sin(time*10.0)*p));
+    mat4 rot = getRotMatrix(vec3(time        +sin(time*30.0)*p,
+                                 time*0.860    +sin(time*20.0)*p*1.24,
+                                 time*0.473    +sin(time*10.0)*p));
 #endif
     
     vec3 instances[18];
@@ -169,5 +169,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     }
     
     // fragment
-	fragColor = vec4(c,1.0);
+    fragColor = vec4(c,1.0);
 }

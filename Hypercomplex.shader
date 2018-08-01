@@ -35,7 +35,7 @@ float julia(vec3 p,vec4 q) {
         z2 = dot(z,z);
         if(z2 > 4.0) break;
     }    
-	return 0.25*sqrt(z2/md2)*log(z2);    
+    return 0.25*sqrt(z2/md2)*log(z2);    
 }
 
 float rsq(float x) {
@@ -87,7 +87,7 @@ float spheretracing(vec3 ori, vec3 dir, out vec3 p) {
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-	vec2 uv = fragCoord.xy / iResolution.xy;
+    vec2 uv = fragCoord.xy / iResolution.xy;
     uv = uv * 2.0 - 1.0;
     uv.x *= iResolution.x / iResolution.y;    
     float time = iTime * 0.1;
@@ -108,9 +108,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // bg    
     vec3 bg = mix(
         mix(vec3(0.0), BG,        
-        	smoothstep(-1.0,1.0,uv.y)),
+            smoothstep(-1.0,1.0,uv.y)),
         mix(BG*0.5, vec3(0.0),        
-        	smoothstep(-1.0,1.0,uv.y)),
+            smoothstep(-1.0,1.0,uv.y)),
         smoothstep(-1.0,1.0,uv.x));      
     bg *= 0.8 + 0.2 * smoothstep(0.1,0.0,sin((uv.x-uv.y)*40.0));
     
@@ -127,6 +127,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
         
     //color = vec3(ao);
     //color = n * 0.5 + 0.5;
-	
-	fragColor = vec4(pow(color,vec3(0.4545)),1.0);
+    
+    fragColor = vec4(pow(color,vec3(0.4545)),1.0);
 }

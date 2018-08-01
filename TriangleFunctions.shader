@@ -1,11 +1,11 @@
 /*
-	"Triangle functions" by Alexander Alekseev aka TDM - 2016
-	License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+    "Triangle functions" by Alexander Alekseev aka TDM - 2016
+    License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
 
-	Papers:
-	http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
-	http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
+    Papers:
+    http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
+    http://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
 */
 
 const int NUM_STEPS = 32;
@@ -13,16 +13,16 @@ const int AO_SAMPLES = 4;
 const vec2 AO_PARAM = vec2(1.2, 3.8);
 const vec2 CORNER_PARAM = vec2(0.25, 40.0);
 const float INV_AO_SAMPLES = 1.0 / float(AO_SAMPLES);
-const float TRESHOLD 	= 0.2;
-const float EPSILON 	= 1e-4;
+const float TRESHOLD     = 0.2;
+const float EPSILON     = 1e-4;
 const float LIGHT_INTENSITY = 0.3;
-const vec3 WHITE 	= vec3(1.2,1.07,0.98) * LIGHT_INTENSITY;
+const vec3 WHITE     = vec3(1.2,1.07,0.98) * LIGHT_INTENSITY;
 
 vec3 tri[3];
 
 // math
 float saturate(float x) { return clamp(x,0.,1.); }
-float boolUnion(float a,float b) { return min(a,b); }	
+float boolUnion(float a,float b) { return min(a,b); }    
 
 #define RAY_TRIANGLE_INTERSECTION triangleIntersectionCramer
 
@@ -53,8 +53,8 @@ float triangleDistance(vec3 p,vec3 v0,vec3 v1,vec3 v2) {
 
 /******************************************************************
  culled triangle intersection - based on Cramer's rule
- 	24 multiplications (6*2+3*4)
- 	1 division
+     24 multiplications (6*2+3*4)
+     1 division
  ******************************************************************/
 
 float triangleIntersectionCramerCulled(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
@@ -63,21 +63,21 @@ float triangleIntersectionCramerCulled(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
     float det = dot(e1,ce0d);
     
     // check intersection
-   	float v = dot(r,ce0d);    
+       float v = dot(r,ce0d);    
     if(v < 0.0 || v > det) return -1.0;
     
     vec3 ce1r = cross(e1,r);
-   	float u = dot(d,ce1r);
+       float u = dot(d,ce1r);
     if(u < 0.0 || (u+v) > det) return -1.0;
     
     // distance to triangle
-	return dot(e0,ce1r) / det;
+    return dot(e0,ce1r) / det;
 }
 
 /******************************************************************
  triangle intersection - based on Cramer's rule
- 	27 multiplications (6*2+3*4+3)
- 	1 division
+     27 multiplications (6*2+3*4+3)
+     1 division
  ******************************************************************/
 
 float triangleIntersectionCramer(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
@@ -86,21 +86,21 @@ float triangleIntersectionCramer(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
     float idet = 1.0 / dot(e1,ce0d);
     
     // check intersection
-   	float v = dot(r,ce0d) * idet;    
+       float v = dot(r,ce0d) * idet;    
     if(v < 0.0 || v > 1.0) return -1.0;
     
     vec3 ce1r = cross(e1,r);
-   	float u = dot(d,ce1r) * idet;    
+       float u = dot(d,ce1r) * idet;    
     if(u < 0.0 || (u+v) > 1.0) return -1.0;
     
     // distance to triangle
-	return dot(e0,ce1r) * idet;
+    return dot(e0,ce1r) * idet;
 }
 
 /******************************************************************
  triangle intersection - simple approach
- 	45 multiplications (6×4+3×6+3)
- 	1 division
+     45 multiplications (6×4+3×6+3)
+     1 division
  ******************************************************************/
 
 float triangleIntersectionSimple(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
@@ -116,7 +116,7 @@ float triangleIntersectionSimple(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
        dot(normal, cross(e1,v2-point)) < 0.0 ||
        dot(normal, cross(v2-v1,point-v1)) < 0.0) return -1.0;   
     
-	return t;
+    return t;
 }
 
 
@@ -130,7 +130,7 @@ float specular(vec3 n,vec3 l,vec3 e,float s) {
 }
 
 float plane(vec3 gp, vec4 p) {
-	return dot(p.xyz,gp+p.xyz*p.w);
+    return dot(p.xyz,gp+p.xyz*p.w);
 }
 
 // world
@@ -183,7 +183,7 @@ vec3 getObjectColor(vec3 p, vec3 l, vec3 n, vec3 e) {
 
 // main
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-	vec2 iuv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
+    vec2 iuv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
     vec2 uv = iuv;
     uv.x *= iResolution.x / iResolution.y;    
         
@@ -196,9 +196,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     
     // triangle    
     vec2 sc2 = vec2(sin(iTime),cos(iTime)) * 0.3;
-    tri[0] = vec3(-1.0+sc2.x,	-0.4+sc2.y,	-sc2.x*2.0);
-    tri[1] = vec3( 0.0+sc2.y,	 1.2+sc2.x,	sc2.y);
-    tri[2] = vec3( 1.0-sc2.x,	-0.4-sc2.y,	sc2.x*2.0);        
+    tri[0] = vec3(-1.0+sc2.x,    -0.4+sc2.y,    -sc2.x*2.0);
+    tri[1] = vec3( 0.0+sc2.y,     1.2+sc2.x,    sc2.y);
+    tri[2] = vec3( 1.0-sc2.x,    -0.4-sc2.y,    sc2.x*2.0);        
         
     // tracing
     vec3 p;
@@ -217,5 +217,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     color *= occ;    
     color = pow(color,vec3(1.0/2.2));
     
-	fragColor = vec4(color,1.0);
+    fragColor = vec4(color,1.0);
 }

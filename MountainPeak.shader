@@ -7,8 +7,8 @@ const int NUM_STEPS = 38;
 const int NUM_STEPS_VOLUME = 10;
 const float STRIDE = 0.75;
 const float STRIDE_VOLUME = 1.0;
-const float PI	 	= 3.1415;
-const float EPSILON	= 1e-3;
+const float PI         = 3.1415;
+const float EPSILON    = 1e-3;
 
 // terrain
 const int ITER_GEOMETRY = 4;
@@ -31,24 +31,24 @@ vec3 light = normalize(vec3(1.0,1.0,-0.3));
 
 // math
 mat3 fromEuler(vec3 ang) {
-	vec2 a1 = vec2(sin(ang.x),cos(ang.x));
+    vec2 a1 = vec2(sin(ang.x),cos(ang.x));
     vec2 a2 = vec2(sin(ang.y),cos(ang.y));
     vec2 a3 = vec2(sin(ang.z),cos(ang.z));
     mat3 m;
     m[0] = vec3(a1.y*a3.y+a1.x*a2.x*a3.x,a1.y*a2.x*a3.x+a3.y*a1.x,-a2.y*a3.x);
-	m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
-	m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
-	return m;
+    m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
+    m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
+    return m;
 }
 float saturate(float x) { return clamp(x,0.,1.); }
 
 /*float hash(vec2 p) {
-	float h = dot(p,vec2(127.1,311.7));	
+    float h = dot(p,vec2(127.1,311.7));    
     return fract(sin(h)*43758.5453123);
 }*/
 float hash(vec2 p) {
     uint n = floatBitsToUint(p.x * 122.0 + p.y);
-	n = (n << 13U) ^ n;
+    n = (n << 13U) ^ n;
     n = n * (n * n * 15731U + 789221U) + 1376312589U;
     return uintBitsToFloat( (n>>9U) | 0x3f800000U ) - 1.0;
 }
@@ -60,19 +60,19 @@ float hash3(vec3 p) {
 // 3d noise
 float noise_3(in vec3 p) {
     vec3 i = floor( p );
-    vec3 f = fract( p );	
-	vec3 u = f*f*(3.0-2.0*f);
+    vec3 f = fract( p );    
+    vec3 u = f*f*(3.0-2.0*f);
     
     float a = hash3( i + vec3(0.0,0.0,0.0) );
-	float b = hash3( i + vec3(1.0,0.0,0.0) );    
+    float b = hash3( i + vec3(1.0,0.0,0.0) );    
     float c = hash3( i + vec3(0.0,1.0,0.0) );
-	float d = hash3( i + vec3(1.0,1.0,0.0) ); 
+    float d = hash3( i + vec3(1.0,1.0,0.0) ); 
     float v1 = mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
     
     a = hash3( i + vec3(0.0,0.0,1.0) );
-	b = hash3( i + vec3(1.0,0.0,1.0) );    
+    b = hash3( i + vec3(1.0,0.0,1.0) );    
     c = hash3( i + vec3(0.0,1.0,1.0) );
-	d = hash3( i + vec3(1.0,1.0,1.0) );
+    d = hash3( i + vec3(1.0,1.0,1.0) );
     float v2 = mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
         
     return abs(mix(v1,v2,u.z));
@@ -81,13 +81,13 @@ float noise_3(in vec3 p) {
 // noise with analytical derivatives (thanks to iq)
 vec3 noise_deriv(in vec2 p) {
     vec2 i = floor( p );
-    vec2 f = fract( p );	
-	vec2 u = f*f*(3.0-2.0*f);
+    vec2 f = fract( p );    
+    vec2 u = f*f*(3.0-2.0*f);
     
     float a = hash( i + vec2(0.0,0.0) );
-	float b = hash( i + vec2(1.0,0.0) );    
+    float b = hash( i + vec2(1.0,0.0) );    
     float c = hash( i + vec2(0.0,1.0) );
-	float d = hash( i + vec2(1.0,1.0) );    
+    float d = hash( i + vec2(1.0,1.0) );    
     float h1 = mix(a,b,u.x);
     float h2 = mix(c,d,u.x);
                                   
@@ -116,7 +116,7 @@ float map(vec3 p) {
     
     float h = 0.0;    
     for(int i = 0; i < ITER_GEOMETRY; i++) {          
-    	vec3 n = octave((uv - dsum * TERR_WARP) * frq);
+        vec3 n = octave((uv - dsum * TERR_WARP) * frq);
         h += n.x * amp;       
         
         dsum += n.yz * (n.x*2.0-1.0) * amp;
@@ -135,7 +135,7 @@ float map_detailed(vec3 p) {
     
     float h = 0.0;    
     for(int i = 0; i < ITER_FRAGMENT; i++) {        
-    	vec3 n = octave((uv - dsum * TERR_WARP) * frq);
+        vec3 n = octave((uv - dsum * TERR_WARP) * frq);
         h += n.x * amp;
         
         dsum += n.yz * (n.x*2.0-1.0) * amp;
@@ -208,14 +208,14 @@ vec3 terr_color(in vec3 p, in vec3 n, in vec3 eye, in vec3 dist) {
 
 // main
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-	vec2 uv = fragCoord.xy / iResolution.xy;
+    vec2 uv = fragCoord.xy / iResolution.xy;
     uv = uv * 2.0 - 1.0;
     uv.x *= iResolution.x / iResolution.y;    
     float time = iTime * 0.1;
         
     // ray
     vec3 ang = vec3(sin(time*6.0)*0.1,0.1,-time + iMouse.x*0.01);
-	mat3 rot = fromEuler(ang);
+    mat3 rot = fromEuler(ang);
     
     vec3 ori = vec3(0.0,5.0,40.0);
     vec3 dir = normalize(vec3(uv.xy,-2.0));
@@ -253,5 +253,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // post
     color = (1.0 - exp(-color)) * 1.5;
     color = pow(color,vec3(0.85));
-	fragColor = vec4(color,1.0);
+    fragColor = vec4(color,1.0);
 }

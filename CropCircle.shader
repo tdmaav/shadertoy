@@ -23,9 +23,9 @@ float circle(vec2 p, vec2 c, float r) {
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-	vec2 uv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
+    vec2 uv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
     uv.x *= iResolution.x / iResolution.y;
-	 
+     
     // initial circle   
     float sum = circle(uv,vec2(0.0,0.0),R);
         
