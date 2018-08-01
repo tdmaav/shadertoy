@@ -63,11 +63,11 @@ float triangleIntersectionCramerCulled(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
     float det = dot(e1,ce0d);
     
     // check intersection
-       float v = dot(r,ce0d);    
+    float v = dot(r,ce0d);    
     if(v < 0.0 || v > det) return -1.0;
     
     vec3 ce1r = cross(e1,r);
-       float u = dot(d,ce1r);
+    float u = dot(d,ce1r);
     if(u < 0.0 || (u+v) > det) return -1.0;
     
     // distance to triangle
@@ -86,11 +86,11 @@ float triangleIntersectionCramer(vec3 o,vec3 d, vec3 v0,vec3 v1,vec3 v2) {
     float idet = 1.0 / dot(e1,ce0d);
     
     // check intersection
-       float v = dot(r,ce0d) * idet;    
+    float v = dot(r,ce0d) * idet;    
     if(v < 0.0 || v > 1.0) return -1.0;
     
     vec3 ce1r = cross(e1,r);
-       float u = dot(d,ce1r) * idet;    
+    float u = dot(d,ce1r) * idet;    
     if(u < 0.0 || (u+v) > 1.0) return -1.0;
     
     // distance to triangle
