@@ -1,12 +1,11 @@
 // x - distance to border, y - distance to center, zw - cell uv
 vec4 hex(vec2 uv) {
-    uv *= mat2(1.1547,0.0,-0.5773503,1.0); // 1/cos(30); -0.5/cos(30)
-
-    vec2 f = fract(uv);
-    float triid = step(1.0,f.x+f.y);
-    f = mix(f, 1.0-f, triid);
+    vec2 f = fract(uv * mat2(1.1547,0.0,-0.5773503,1.0));
+    float triid = 1.0;
+    if((f.x+f.y) > 1.0) { f = 1.0 - f; triid = -1.0; }
+    
     vec2 co = step(f.yx,f) * step(1.0-f.x-f.y,max(f.x,f.y));
-    co = (f - co) * sign(0.5 - triid) * mat2(0.866026,0.0,0.5,1.0);
+    co = (f - co) * triid * mat2(0.866026,0.0,0.5,1.0);
     
     uv = abs(co);    
     return vec4(0.5-max(uv.y,abs(dot(vec2(0.866026,0.5),uv))),length(co),co);
