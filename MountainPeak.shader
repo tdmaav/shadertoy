@@ -7,16 +7,16 @@ const int NUM_STEPS = 38;
 const int NUM_STEPS_VOLUME = 10;
 const float STRIDE = 0.75;
 const float STRIDE_VOLUME = 1.0;
-const float PI         = 3.1415;
-const float EPSILON    = 1e-3;
+const float PI	 	= 3.1415;
+const float EPSILON	= 1e-3;
 
 // terrain
-const int ITER_GEOMETRY = 4;
-const int ITER_FRAGMENT = 7;
+const int ITER_GEOMETRY = 7;
+const int ITER_FRAGMENT = 10;
 
 const float TERR_HEIGHT = 12.0;
 const float TERR_WARP = 0.7;
-const float TERR_OCTAVE_AMP = 0.55;
+const float TERR_OCTAVE_AMP = 0.58;
 const float TERR_OCTAVE_FREQ = 2.5;
 const float TERR_MULTIFRACT = 0.27;
 const float TERR_CHOPPY = 1.9;
@@ -24,31 +24,31 @@ const float TERR_FREQ = 0.24;
 const vec2 TERR_OFFSET = vec2(13.5,15.);
 
 const vec3 SKY_COLOR = vec3(0.5,0.59,0.75) * 0.6;
-const vec3 SUN_COLOR = vec3(1.,1.,0.98) * 0.75;
-const vec3 COLOR_SNOW = vec3(1.0,1.0,1.1) * 2.0;
-const vec3 COLOR_ROCK = vec3(0.0,0.1,0.1);
+const vec3 SUN_COLOR = vec3(1.,1.,0.98) * 0.7;
+const vec3 COLOR_SNOW = vec3(1.0,1.0,1.1) * 2.2;
+const vec3 COLOR_ROCK = vec3(0.0,0.0,0.1);
 vec3 light = normalize(vec3(1.0,1.0,-0.3));
 
 // math
 mat3 fromEuler(vec3 ang) {
-    vec2 a1 = vec2(sin(ang.x),cos(ang.x));
+	vec2 a1 = vec2(sin(ang.x),cos(ang.x));
     vec2 a2 = vec2(sin(ang.y),cos(ang.y));
     vec2 a3 = vec2(sin(ang.z),cos(ang.z));
     mat3 m;
     m[0] = vec3(a1.y*a3.y+a1.x*a2.x*a3.x,a1.y*a2.x*a3.x+a3.y*a1.x,-a2.y*a3.x);
-    m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
-    m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
-    return m;
+	m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
+	m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
+	return m;
 }
 float saturate(float x) { return clamp(x,0.,1.); }
 
 /*float hash(vec2 p) {
-    float h = dot(p,vec2(127.1,311.7));    
+	float h = dot(p,vec2(127.1,311.7));	
     return fract(sin(h)*43758.5453123);
 }*/
 float hash(vec2 p) {
     uint n = floatBitsToUint(p.x * 122.0 + p.y);
-    n = (n << 13U) ^ n;
+	n = (n << 13U) ^ n;
     n = n * (n * n * 15731U + 789221U) + 1376312589U;
     return uintBitsToFloat( (n>>9U) | 0x3f800000U ) - 1.0;
 }
@@ -60,19 +60,19 @@ float hash3(vec3 p) {
 // 3d noise
 float noise_3(in vec3 p) {
     vec3 i = floor( p );
-    vec3 f = fract( p );    
-    vec3 u = f*f*(3.0-2.0*f);
+    vec3 f = fract( p );	
+	vec3 u = f*f*(3.0-2.0*f);
     
     float a = hash3( i + vec3(0.0,0.0,0.0) );
-    float b = hash3( i + vec3(1.0,0.0,0.0) );    
+	float b = hash3( i + vec3(1.0,0.0,0.0) );    
     float c = hash3( i + vec3(0.0,1.0,0.0) );
-    float d = hash3( i + vec3(1.0,1.0,0.0) ); 
+	float d = hash3( i + vec3(1.0,1.0,0.0) ); 
     float v1 = mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
     
     a = hash3( i + vec3(0.0,0.0,1.0) );
-    b = hash3( i + vec3(1.0,0.0,1.0) );    
+	b = hash3( i + vec3(1.0,0.0,1.0) );    
     c = hash3( i + vec3(0.0,1.0,1.0) );
-    d = hash3( i + vec3(1.0,1.0,1.0) );
+	d = hash3( i + vec3(1.0,1.0,1.0) );
     float v2 = mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
         
     return abs(mix(v1,v2,u.z));
@@ -81,13 +81,13 @@ float noise_3(in vec3 p) {
 // noise with analytical derivatives (thanks to iq)
 vec3 noise_deriv(in vec2 p) {
     vec2 i = floor( p );
-    vec2 f = fract( p );    
-    vec2 u = f*f*(3.0-2.0*f);
+    vec2 f = fract( p );	
+	vec2 u = f*f*(3.0-2.0*f);
     
     float a = hash( i + vec2(0.0,0.0) );
-    float b = hash( i + vec2(1.0,0.0) );    
+	float b = hash( i + vec2(1.0,0.0) );    
     float c = hash( i + vec2(0.0,1.0) );
-    float d = hash( i + vec2(1.0,1.0) );    
+	float d = hash( i + vec2(1.0,1.0) );    
     float h1 = mix(a,b,u.x);
     float h2 = mix(c,d,u.x);
                                   
@@ -116,7 +116,7 @@ float map(vec3 p) {
     
     float h = 0.0;    
     for(int i = 0; i < ITER_GEOMETRY; i++) {          
-        vec3 n = octave((uv - dsum * TERR_WARP) * frq);
+    	vec3 n = octave((uv - dsum * TERR_WARP) * frq);
         h += n.x * amp;       
         
         dsum += n.yz * (n.x*2.0-1.0) * amp;
@@ -135,7 +135,7 @@ float map_detailed(vec3 p) {
     
     float h = 0.0;    
     for(int i = 0; i < ITER_FRAGMENT; i++) {        
-        vec3 n = octave((uv - dsum * TERR_WARP) * frq);
+    	vec3 n = octave((uv - dsum * TERR_WARP) * frq);
         h += n.x * amp;
         
         dsum += n.yz * (n.x*2.0-1.0) * amp;
@@ -145,6 +145,30 @@ float map_detailed(vec3 p) {
     }
     h *= TERR_HEIGHT / (1.0 + dot(p.xz,p.xz) * 1e-3);
     return p.y - h;
+}
+
+float getAO(vec3 p) {
+    float frq = TERR_FREQ;
+    float amp = 1.0;
+    vec2 uv = p.xz * frq + TERR_OFFSET;
+    vec2 dsum = vec2(0.0);
+    
+    float h = 1.0;    
+    for(int i = 0; i < ITER_FRAGMENT; i++) {        
+    	vec3 n = octave((uv - dsum * TERR_WARP) * frq);
+        
+        float it = float(i)/float(ITER_FRAGMENT-1);
+        float iao = mix(sqrt(n.x),1.0, it*0.9);
+        iao = mix(iao, 1.0 ,1.0 - it);
+        h *= iao;
+        
+        dsum += n.yz * (n.x*2.0-1.0) * amp;
+        frq *= TERR_OCTAVE_FREQ;
+        amp *= TERR_OCTAVE_AMP;
+        amp *= pow(n.x,TERR_MULTIFRACT);
+    }
+    
+    return sqrt(h*2.0);
 }
 float map_noise(vec3 p) {
     p *= 0.5;    
@@ -196,7 +220,7 @@ vec3 sky_color(vec3 e) {
     vec3 ret;
     ret.x = pow(1.0-e.y,3.0);
     ret.y = pow(1.0-e.y, 1.2);
-    ret.z = 0.7+(1.0-e.y)*0.3;    
+    ret.z = 0.8+(1.0-e.y)*0.3;    
     return ret;
 }
 vec3 terr_color(in vec3 p, in vec3 n, in vec3 eye, in vec3 dist) {
@@ -208,14 +232,14 @@ vec3 terr_color(in vec3 p, in vec3 n, in vec3 eye, in vec3 dist) {
 
 // main
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-    vec2 uv = fragCoord.xy / iResolution.xy;
+	vec2 uv = fragCoord.xy / iResolution.xy;
     uv = uv * 2.0 - 1.0;
     uv.x *= iResolution.x / iResolution.y;    
     float time = iTime * 0.1;
         
     // ray
     vec3 ang = vec3(sin(time*6.0)*0.1,0.1,-time + iMouse.x*0.01);
-    mat3 rot = fromEuler(ang);
+	mat3 rot = fromEuler(ang);
     
     vec3 ori = vec3(0.0,5.0,40.0);
     vec3 dir = normalize(vec3(uv.xy,-2.0));
@@ -232,9 +256,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec3 n = getNormal(p, dot(dist,dist)* (1e-1 / iResolution.x));
              
     // terrain
+    float ao = getAO(p);
     vec3 color = terr_color(p,n,dir,dist) * SKY_COLOR;
     color += vec3(diffuse(n,light,2.0) * SUN_COLOR);
     color += vec3(specular(n,light,dir,20.0) * SUN_COLOR*0.4);
+    color *= ao;
         
     // fog
     vec3 fog = sky_color(vec3(dir.x,0.,dir.z));
@@ -251,7 +277,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 #endif
     
     // post
-    color = (1.0 - exp(-color)) * 1.5;
-    color = pow(color,vec3(0.85));
-    fragColor = vec4(color,1.0);
+    //color = (1.0 - exp(-color)) * 1.5;
+    color = (color - 1.0) * 1.2 + 1.0;
+    color = pow(color * 0.8,vec3(1.0/2.2));
+	fragColor = vec4(color,1.0);
 }
