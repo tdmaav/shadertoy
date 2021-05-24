@@ -82,13 +82,10 @@ void initBody(int id, inout Body body) {
  */
 
 vec2 collisionWithPlane(inout Body b0, vec3 plane) {
-    vec2 displace = vec2(0.0);
     vec2 normal = normalize(plane.xy);
     float dist = dot(b0.pos,normal) + plane.z;
     float penetration = BALL_SIZE - dist;
     if(penetration > 0.0) {
-        displace += normal * penetration;
-
         vec2 r0 = -normal * BALL_SIZE;        
 
         // normal
@@ -117,18 +114,18 @@ vec2 collisionWithPlane(inout Body b0, vec3 plane) {
 
         b0.vel += tangent * (lambdaF * b0.inv_mass);
         b0.ang_vel += cross2(r0, tangent) * lambdaF * b0.inv_momentum;
+        
+        return normal * penetration;
     }
-    return displace;
+    return vec2(0.0);
 }
 
 vec2 collisionWithBody(inout Body b0, in Body b1) {
-    vec2 displace = vec2(0.0);
     vec2 normal = b0.pos - b1.pos;
     float dist = length(normal);
     float penetration = 2.0 * BALL_SIZE - dist;
     if(penetration > 0.0) {
         normal /= dist;
-        displace += normal * penetration * 0.5;
 
         vec2 r0 = -normal * BALL_SIZE;
         vec2 r1 = normal * BALL_SIZE;
@@ -169,8 +166,10 @@ vec2 collisionWithBody(inout Body b0, in Body b1) {
 
         b0.vel += tangent * (lambdaF * b0.inv_mass);
         b0.ang_vel += cross2(r0, tangent) * lambdaF * b0.inv_momentum;
+        
+        return normal * penetration * 0.5;
     }
-    return displace;
+    return vec2(0.0);
 }
 
 void solve(sampler2D data, inout Body b0, int id, vec2 ires) {
