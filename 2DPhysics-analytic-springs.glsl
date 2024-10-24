@@ -7,7 +7,6 @@
 const int NUM_OBJECTS = 64;
 const float OBJECTS_GAP = 0.5 * (8.0 / float(NUM_OBJECTS));
 const float BALL_SIZE = OBJECTS_GAP / 2.0;
-const float MAX_DT = 1.0 / 20.0;
 
 /*
  * Dynamics
@@ -20,18 +19,18 @@ vec2 springSystemModel(float t, vec2 b0, vec2 b1, vec2 b2) {
     float rh = sqrt(3.*k);
     float rp = sqrt(k);
     
-    float CH1 = b0.x - (b1.x+b2.x)/2.0;
-    float CH2 = (b0.y - (b1.y+b2.y)/2.0) / rh;
-    float CP1 = (b1.x+b2.x)/2.;
-    float CP2 = (b1.y+b2.y)/(2.*rp);
-    
-    float xh = CH1 * cos(rh*t) + CH2 * sin(rh*t);
-    float xp = CP1 * cos(rp*t) + CP2 * sin(rp*t);    
-    float x = xh + xp;
-    
-    xh = -CH1 * rh * sin(rh*t) + CH2 * rh * cos(rh*t);
-    xp = -CP1 * rp * sin(rp*t) + CP2 * rp * cos(rp*t);
-    float dx = xh + xp;
+    vec2 CH = vec2(b0.x - (b1.x+b2.x)/2., 
+                  (b0.y - (b1.y+b2.y)/2.) / rh);
+    vec2 CP = vec2((b1.x+b2.x)/2.,
+                   (b1.y+b2.y)/(2.*rp));
+                   
+    vec2 exph = vec2(cos(rh*t), sin(rh*t));
+    vec2 expp = vec2(cos(rp*t), sin(rp*t));
+       
+    float x  = dot(CH, exph) + 
+               dot(CP, expp);
+    float dx = dot(CH, rh*exph.yx*vec2(-1.0,1.0)) + 
+               dot(CP, rp*expp.yx*vec2(-1.0,1.0));
     
     return vec2(x,dx) * exp(-t * damp); // new state
 }
